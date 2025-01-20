@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import search_icon from '../assets/search.png';
 import clear_icon from '../assets/clear.png';
 import cloud_icon from '../assets/cloud.png';
@@ -7,11 +7,36 @@ import rain_icon from '../assets/rain.png';
 import snow_icon from '../assets/snow.png';
 import wind_icon from '../assets/wind.png';
 import humidity_icon from '../assets/humidity.png';
+import { use } from 'react';
 
 
 
 
 const Weather = () => {
+
+  const [weatherData, setWeatherData] = useState(false);
+
+  const search =async (city)=>{
+    try{
+      const url =`https://api.openweathermap.org/data/2.5/
+      // weather?q=${city}&appid=${import.meta.env.VITE_APP_ID}`
+
+      const response =await fetch(url);
+      const data = await response.json();
+      console.loh(data);
+      setWeatherData({
+        humidity : data.main.humidity,
+        windSpeed: data.wind.speed,
+        temperature: data.main.temp,
+      });
+    } catch (error){
+      
+    }
+  }
+useEffect (()=>{
+  search("New York");
+},[])
+
   return (
     <div className="weather place-self-center p-10 rounded-lg bg-gradient-to-br from-[#2f4680] to-[#500ae4] flex flex-col items-center">
       {/* Barra de búsqueda */}
