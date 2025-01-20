@@ -44,6 +44,32 @@ const Weather = () => {
       <div className="location text-white text-4xl">
         New York, USA
       </div>
+
+      {/* Datos adicionales */}
+      <div className="weather-data w-full mt-10 text-white flex justify-between">
+        <div className="col flex items-start gap-3 text-lg">
+          <img
+            src={wind_icon}
+            alt="Wind"
+            className="w-6 mt-2"
+          />
+          <div>
+            <span>12 km/h </span>
+            <span className="text-sm">Wind</span>
+          </div>
+        </div>
+        <div className="col flex items-start gap-3 text-lg">
+          <img
+            src={humidity_icon}
+            alt="Humidity"
+            className="w-6 mt-2"
+          />
+          <div>
+            <span>75% </span>
+            <span className="text-sm">Humidity</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
