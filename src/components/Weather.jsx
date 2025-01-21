@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useRef } from 'react';
 import search_icon from '../assets/search.png';
 import clear_icon from '../assets/clear.png';
 import cloud_icon from '../assets/cloud.png';
@@ -13,6 +13,8 @@ import { use } from 'react';
 
 
 const Weather = () => {
+
+  const inputRef = useRef();
 
   const [weatherData, setWeatherData] = useState(false);
 
@@ -34,11 +36,20 @@ const Weather = () => {
   }
 
   const search = async (city) => {
+  if(city === "") {
+    alert("Enter City Name");
+    return;
+  }
   try {
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${import.meta.env.VITE_APP_ID}`;
 
     const response = await fetch(url);
     const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.message);
+      return;
+    }
 
     if (response.ok) {
       const icon = allIcons[data.weather[0].icon] || clear_icon;
@@ -65,6 +76,7 @@ useEffect (()=>{
       {/* Barra de búsqueda */}
       <div className="search-bar flex items-center gap-3">
         <input
+          ref={inputRef}
           type="text"
           placeholder="Search"
           className="h-12 w-64 rounded-full pl-6 text-gray-600 bg-[#ebfffc] text-lg border-none outline-none shadow-md focus:bg-[#d8fff9] transition-all"
@@ -72,12 +84,12 @@ useEffect (()=>{
         <img
           src={search_icon}
           alt="Search"
+          onClick={()=>search(inputRef.current.value)}
           className="w-12 h-12 p-3 rounded-full bg-[#ebfffc] cursor-pointer shadow-md hover:scale-110 transition-transform"
         />
       </div>
-
-      {/* Icono del clima */}
-      <img
+      {weatherData?<>
+       <img
         src={weatherData.icon}
         alt="Weather Icon"
         className="weather-icon w-36 my-8"
@@ -113,11 +125,13 @@ useEffect (()=>{
             className="w-6 mt-2"
           />
           <div>
-            <span>{weatherData.humidity} %</span>
+            <span>{weatherData.humidity} % </span>
             <span className="text-sm">Humidity</span>
           </div>
         </div>
       </div>
+      </>:<></>}
+
     </div>
   );
 };
