@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import search_icon from '../assets/search.png';
 import clear_icon from '../assets/clear.png';
 import cloud_icon from '../assets/cloud.png';
-import drizzle_icon from '../assets/drizzle.png';
+/*import drizzle_icon from '../assets/drizzle.png';*/
 import rain_icon from '../assets/rain.png';
 import snow_icon from '../assets/snow.png';
 import wind_icon from '../assets/wind.png';
@@ -16,25 +16,48 @@ const Weather = () => {
 
   const [weatherData, setWeatherData] = useState(false);
 
-  const search =async (city)=>{
-    try{
-      const url =`https://api.openweathermap.org/data/2.5/
-      // weather?q=${city}&appid=${import.meta.env.VITE_APP_ID}`
-
-      const response =await fetch(url);
-      const data = await response.json();
-      console.loh(data);
-      setWeatherData({
-        humidity : data.main.humidity,
-        windSpeed: data.wind.speed,
-        temperature: data.main.temp,
-      });
-    } catch (error){
-      
-    }
+  const allIcons={
+    "01d":clear_icon,
+    "01n":clear_icon,
+    "02d":cloud_icon,
+    "02n":cloud_icon,
+    "03d":cloud_icon,
+    "03n":cloud_icon,
+    "04d":cloud_icon,
+    "04n":cloud_icon,
+    "09d":rain_icon,
+    "09n":rain_icon,
+    "10d":rain_icon,
+    "10n":rain_icon,
+    "13d":snow_icon,
+    "13n":snow_icon,
   }
+
+  const search = async (city) => {
+  try {
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${import.meta.env.VITE_APP_ID}`;
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (response.ok) {
+      const icon = allIcons[data.weather[0].icon] || clear_icon;
+      setWeatherData({
+        humidity: data.main.humidity,
+        windSpeed: data.wind.speed,
+        temperature: Math.floor(data.main.temp),
+        location: data.name,
+        icon: icon,
+      });
+    } else {
+      console.error("Error:", data.message);
+    }
+  } catch (error) {
+    console.error("Error fetching weather data:", error);
+  }
+};
 useEffect (()=>{
-  search("New York");
+  search("Santiago");
 },[])
 
   return (
@@ -55,19 +78,19 @@ useEffect (()=>{
 
       {/* Icono del clima */}
       <img
-        src={clear_icon}
+        src={weatherData.icon}
         alt="Weather Icon"
         className="weather-icon w-36 my-8"
       />
 
       {/* Temperatura */}
       <div className="temperature text-white text-7xl leading-none">
-        25°C
+        {weatherData.temperature}°C
       </div>
 
       {/* Ubicación */}
       <div className="location text-white text-4xl">
-        New York, USA
+        {weatherData.location}
       </div>
 
       {/* Datos adicionales */}
@@ -79,7 +102,7 @@ useEffect (()=>{
             className="w-6 mt-2"
           />
           <div>
-            <span>12 km/h </span>
+            <span>{weatherData.windSpeed} Km/h </span>
             <span className="text-sm">Wind</span>
           </div>
         </div>
@@ -90,7 +113,7 @@ useEffect (()=>{
             className="w-6 mt-2"
           />
           <div>
-            <span>75% </span>
+            <span>{weatherData.humidity} %</span>
             <span className="text-sm">Humidity</span>
           </div>
         </div>
